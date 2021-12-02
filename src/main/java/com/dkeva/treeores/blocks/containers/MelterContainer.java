@@ -49,7 +49,7 @@ public class MelterContainer extends Container {
        return this.melterData.get(0);
     }
     public int getCounter () {return this.melterData.get(1);}
-
+    public int getProcessTime () {return this.melterData.get(2);}
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0 ; i < amount ; i++) {
             addSlot(new SlotItemHandler(handler, index, x, y));

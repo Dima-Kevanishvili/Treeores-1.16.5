@@ -4,28 +4,19 @@ import com.dkeva.treeores.Refs;
 import com.dkeva.treeores.crafting.MeltingRecipe;
 import com.dkeva.treeores.setup.ModSetup;
 import com.dkeva.treeores.setup.Registration;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.inventory.IRecipeHelperPopulator;
-import net.minecraft.inventory.IRecipeHolder;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IIntArray;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -40,25 +31,38 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 
-public class TileEntityMelter extends TileEntity implements ITickableTileEntity, IRecipeHolder, IRecipeHelperPopulator, ISidedInventory {
+public class TileEntityMelter extends TileEntity implements ITickableTileEntity {
     FluidTank tank = new FluidTank(Refs.MELTER_CAPACITY);
 
     private LazyOptional<IItemHandler> itemHandler = LazyOptional.of(this::createItemHandler);
     private LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> tank);
-    private NonNullList<ItemStack> items;
 
+    private MeltingRecipe currentRecipe;
+    private int processTime = 0;
+    private int currentHeatLevel = 0;
+    private boolean isProcessing = false;
 
-    private int counter = Refs.MELTER_COUNTER_MAX;
-    private int heatFormUnderneath = 0;
-    private boolean shouldCount = false;
-
-    private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
     protected final IRecipeType<MeltingRecipe> recipeType;
+    private MelterInventory inventory;
+
+    private Map<Block, Integer> heatMap;
+
 
     public TileEntityMelter() {
         super(Registration.MELTER_TILE.get());
         this.recipeType = ModSetup.MELTING_RECIPE_TYPE;
+        itemHandler.ifPresent(handler -> {
+            this.inventory = new MelterInventory(handler);
+        });
+        heatMap = genHeatMap();
+    }
+
+    private Map<Block, Integer> genHeatMap() {
+        Map<Block, Integer> map = Maps.newLinkedHashMap();
+        map.put(Blocks.TORCH, 2);
+        return map;
     }
 
 
@@ -69,7 +73,14 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity,
                 case 0:
                     return TileEntityMelter.this.tank.getFluidAmount();
                 case 1:
-                    return TileEntityMelter.this.counter;
+                    return TileEntityMelter.this.processTime;
+                case 2: {
+                    try {
+                        return TileEntityMelter.this.currentRecipe.getProcessTime();
+                    } catch (NullPointerException e) {
+                        return 0;
+                    }
+                }
                 default:
                     return 0;
             }
@@ -82,14 +93,14 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity,
                     TileEntityMelter.this.tank.getFluid().setAmount(value);
                     break;
                 case 1:
-                    TileEntityMelter.this.counter = value;
+                    TileEntityMelter.this.processTime = value;
                     break;
             }
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
     };
 
@@ -99,7 +110,7 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity,
         CompoundNBT invTag = tag.getCompound("inv");
         itemHandler.ifPresent(h -> ((INBTSerializable<CompoundNBT>) h).deserializeNBT(invTag));
         tank.readFromNBT(tag);
-        counter = tag.getInt("counter");
+        processTime = tag.getInt("counter");
         super.load(state, tag);
     }
 
@@ -111,7 +122,7 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity,
             tag.put("inv", compound);
         });
         tank.writeToNBT(tag);
-        tag.putInt("counter", counter);
+        tag.putInt("counter", processTime);
         return super.save(tag);
     }
 
@@ -133,10 +144,13 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity,
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 if (slot == 0) {
-                    if (stack.getItem() == Items.IRON_INGOT) {
-                        return true;
+                    boolean flag = false;
+                    for (MeltingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ModSetup.MELTING_RECIPE_TYPE)) {
+                        if (recipe.getIngredient().test(stack)) {
+                            flag = true;
+                        }
                     }
-                    //Todo: add all ingots
+                    return flag;
                 }
                 if (slot == 1) {
                     if (stack.getItem() == Items.OAK_SAPLING) {
@@ -151,57 +165,22 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity,
 
                 return false;
             }
-
-            @Nonnull
-            @Override
-            public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                if (slot == 0) {
-                    if (stack.getItem() != Items.IRON_INGOT) {
-                        return stack;
-                    }
-                    //Todo: add all ingots
-                }
-                if (slot == 1) {
-                    if (stack.getItem() != Items.OAK_SAPLING) {
-                        return stack;
-                    }
-                }
-                if (slot == 2) {
-                    if (stack.getItem() != Registration.IRON_SAPLING.get().asItem()) {
-                        return stack;
-                    }
-                }
-                shouldCount = true;
-                return super.insertItem(slot, stack, simulate);
-            }
-
-            @Nonnull
-            @Override
-            public ItemStack extractItem(int slot, int amount, boolean simulate) {
-                if (slot == 0) {
-                    if (getStackInSlot(slot).isEmpty()) {
-                        shouldCount = false;
-                    }
-                }
-                return super.extractItem(slot, amount, simulate);
-            }
         };
     }
 
-    private void updateHeatFromUnderneath() {
+    private void updateCurrentHeatLevel() {
         BlockPos underneathPos = getBlockPos().below();
         Block blockUnder = level.getBlockState(underneathPos).getBlock();
-        if (blockUnder == Blocks.TORCH) {
-            heatFormUnderneath = 2;
+        int heatForBlock = heatMap.get(blockUnder);
+        if (heatForBlock != currentHeatLevel) {
+            currentHeatLevel = heatForBlock;
             setChanged();
         }
-
-
     }
 
     private void updateCounter() {
-        if (counter > 0) {
-            counter -= heatFormUnderneath;
+        if (isProcessing && processTime > 0) {
+            processTime -= currentHeatLevel;
             setChanged();
         }
     }
@@ -214,6 +193,9 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity,
         if (tank.isEmpty()) {
             return true;
         }
+        if (currentHeatLevel < meltingRecipe.getMinHeatAmount()) {
+            return false;
+        }
         if (!tank.getFluid().isFluidEqual(result)) {
             return false;
         }
@@ -225,24 +207,38 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity,
 
     // Todo: Find Using Recipes | Implement canMelt
     private void handleItemToLiquid() {
-        if (counter <= 0) {
-            itemHandler.ifPresent(iHandler -> {
-                fluidHandler.ifPresent(fHandler -> {
-                    ItemStack stack = iHandler.getStackInSlot(0);
-                    if (!stack.isEmpty()) {
-                        System.out.println(this.level.getRecipeManager().getRecipes());
-                        MeltingRecipe recipe = this.level.getRecipeManager().getRecipeFor(this.recipeType, this, this.level).orElse(null);
-                        if (canMelt(recipe)) {
-                            iHandler.extractItem(0, 1, false);
-                            fHandler.fill(recipe.getResultLiquid(), IFluidHandler.FluidAction.EXECUTE);
+        itemHandler.ifPresent(iHandler -> {
+            fluidHandler.ifPresent(fHandler -> {
+                ItemStack stack = iHandler.getStackInSlot(0);
+                if (!stack.isEmpty()) {
+                    currentRecipe = this.level.getRecipeManager().getRecipeFor(this.recipeType, inventory, this.level).orElse(null);
+                    if (canMelt(currentRecipe)) {
+                        if (!isProcessing) {
+                            processTime = currentRecipe.getProcessTime();
+                            isProcessing = true;
+                            setChanged();
                         }
+                        if (processTime <= 0) {
+                            iHandler.extractItem(0, 1, false);
+                            fHandler.fill(currentRecipe.getResultLiquid(), IFluidHandler.FluidAction.EXECUTE);
+                            isProcessing = false;
+                            setChanged();
+                        }
+                    } else if(isProcessing){
+                        resetProcessing();
                     }
-                });
+                } else if(isProcessing){
+                    resetProcessing();
+                }
             });
-            resetCounter();
-        }
+        });
     }
 
+    private void resetProcessing() {
+        isProcessing = false;
+        processTime = 0;
+        setChanged();
+    }
     // Todo: Add New Recipe Type and Find Using Recipes
     private void handleLiquidToItem() {
         itemHandler.ifPresent(iHandler -> {
@@ -263,10 +259,9 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity,
         if (level.isClientSide) {
             return;
         }
-        if (shouldCount) {
-            updateHeatFromUnderneath();
-            updateCounter();
-        }
+        updateCurrentHeatLevel();
+        updateCounter();
+
         handleItemToLiquid();
         handleLiquidToItem();
 
@@ -293,89 +288,9 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity,
         return getTankAmount() >= Refs.MELTER_CAPACITY;
     }
 
-    public void resetCounter() {
-        counter = Refs.MELTER_COUNTER_MAX;
-        setChanged();
-    }
 
     public IIntArray getMelterData() {
         return melterData;
     }
 
-    // TODO: Figure this out
-    @Override
-    public void fillStackedContents(RecipeItemHelper recipeItemHelper) {
-    }
-
-    // TODO: Do we need this?
-    @Override
-    public void setRecipeUsed(@Nullable IRecipe<?> recipe) {
-        if (recipe != null) {
-            ResourceLocation resourceLocation = recipe.getId();
-
-        }
-    }
-
-    @Nullable
-    @Override
-    public IRecipe<?> getRecipeUsed() {
-        return null;
-    }
-
-    @Override
-    public int[] getSlotsForFace(Direction direction) {
-        return new int[]{0, 1};
-    }
-
-    @Override
-    public boolean canPlaceItemThroughFace(int index, ItemStack stack, @Nullable Direction direction) {
-        return this.canPlaceItem(index, stack);
-    }
-
-    @Override
-    public boolean canTakeItemThroughFace(int index, ItemStack stack, Direction direction) {
-        return index == 1;
-    }
-
-    @Override
-    public int getContainerSize() {
-        return 3;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return items.isEmpty();
-    }
-
-    @Override
-    public ItemStack getItem(int index) {
-        return items.get(index);
-    }
-
-    @Override
-    public ItemStack removeItem(int index, int amount) {
-        return ItemStackHelper.removeItem(items, index, amount);
-    }
-
-    @Override
-    public ItemStack removeItemNoUpdate(int index) {
-        return ItemStackHelper.takeItem(items, index);
-    }
-
-    @Override
-    public void setItem(int index, ItemStack stack) {
-        items.set(index, stack);
-    }
-
-    @Override
-    public boolean stillValid(PlayerEntity player) {
-        return this.level != null
-                && this.level.getBlockEntity(this.worldPosition) == this
-                && player.distanceToSqr(this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 0.5, this.worldPosition.getZ()) <= 64;
-    }
-
-    @Override
-    public void clearContent() {
-        items.clear();
-    }
 }

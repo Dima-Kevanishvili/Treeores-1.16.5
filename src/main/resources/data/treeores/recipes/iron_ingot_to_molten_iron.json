@@ -4,5 +4,7 @@
     "item": "minecraft:iron_ingot"
   },
   "result": "minecraft:water",
-  "amount": 120
+  "amount": 120,
+  "minimumHeat": 2,
+  "processingTime": 50
 }

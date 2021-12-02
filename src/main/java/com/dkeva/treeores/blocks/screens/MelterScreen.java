@@ -11,16 +11,17 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
-public class MelterScreen  extends ContainerScreen<MelterContainer> {
+public class MelterScreen extends ContainerScreen<MelterContainer> {
 
     private ResourceLocation GUI = new ResourceLocation(Refs.MODID, "textures/gui/melter.png");
+
     public MelterScreen(MelterContainer melterContainer, PlayerInventory playerInventory, ITextComponent name) {
         super(melterContainer, playerInventory, name);
     }
 
     @Override
     protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
-        drawString(matrixStack, Minecraft.getInstance().font, "Melter", 10,10,  4210752);
+        drawString(matrixStack, Minecraft.getInstance().font, "Melter", 10, 10, 4210752);
     }
 
     @Override
@@ -29,19 +30,19 @@ public class MelterScreen  extends ContainerScreen<MelterContainer> {
         this.minecraft.getTextureManager().bind(GUI);
         int relY = (this.height - this.imageHeight) / 2;
         int relX = (this.width - this.imageWidth) / 2;
-        this.blit(matrixStack, relX, relY, 0, 0,this.imageWidth, this.imageHeight);
-        final int fluidLevel = menu.getFluidAmount()/54;
-        this.blit(matrixStack, relX + 152, relY + 62 - fluidLevel,176, 62 - fluidLevel, 16, 1+ fluidLevel);
-        final int counter = menu.getCounter()*32/Refs.MELTER_COUNTER_MAX;
-        this.blit(matrixStack,relX + 43, relY + 31 + counter,193, counter, 18,  counter == 0 ? 0 : 32 - counter);
+        this.blit(matrixStack, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
+        final int fluidLevel = menu.getFluidAmount() / 54;
+        this.blit(matrixStack, relX + 152, relY + 62 - fluidLevel, 176, 62 - fluidLevel, 16, 1 + fluidLevel);
+        final int processTime = menu.getProcessTime() == 0 ? 0 : menu.getCounter() * 32 / menu.getProcessTime();
+        this.blit(matrixStack, relX + 43, relY + 31 + processTime, 193, processTime, 18, processTime == 0 ? 0 : 32 - processTime);
     }
 
     @Override
     protected void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY) {
         int relY = (this.height - this.imageHeight) / 2;
         int relX = (this.width - this.imageWidth) / 2;
-        if(mouseX > relX + 150 && mouseX <relX + 170 && mouseY > relY+ 6 && mouseY < relY+63){
-            this.renderTooltip(matrixStack,new StringTextComponent("Amount: "+ menu.getFluidAmount()), mouseX,mouseY);
+        if (mouseX > relX + 150 && mouseX < relX + 170 && mouseY > relY + 6 && mouseY < relY + 63) {
+            this.renderTooltip(matrixStack, new StringTextComponent("Amount: " + menu.getFluidAmount()), mouseX, mouseY);
         }
         super.renderTooltip(matrixStack, mouseX, mouseY);
     }

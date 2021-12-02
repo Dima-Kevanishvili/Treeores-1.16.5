@@ -27,14 +27,15 @@ public class MeltingRecipe implements IRecipe<IInventory> {
     private final ResourceLocation recipeId;
     private Ingredient ingredient;
     private FluidStack resultLiquid;
-    // TODO: Implement minHeat and BaseProcess
-    private Block minHeatSourceBlock;
-    private int baseProcessTime;
+    private int minHeatAmount;
+    private int processTime;
 
-    public MeltingRecipe(ResourceLocation recipeId, Ingredient ingredient, FluidStack result){
+    public MeltingRecipe(ResourceLocation recipeId, Ingredient ingredient, FluidStack result, int minHeatAmount, int processTime){
         this.recipeId = recipeId;
         this.ingredient = ingredient;
         this.resultLiquid = result;
+        this.minHeatAmount = minHeatAmount;
+        this.processTime = processTime;
     }
 
     @Override
@@ -76,6 +77,18 @@ public class MeltingRecipe implements IRecipe<IInventory> {
         return ModSetup.MELTING_RECIPE_TYPE;
     }
 
+    public Ingredient getIngredient() {
+        return this.ingredient;
+    }
+
+    public int getMinHeatAmount() {
+        return minHeatAmount;
+    }
+
+    public int getProcessTime() {
+        return processTime;
+    }
+
     public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<MeltingRecipe> {
 
         @Override
@@ -84,8 +97,10 @@ public class MeltingRecipe implements IRecipe<IInventory> {
             ResourceLocation fluidId = new ResourceLocation(JSONUtils.getAsString(jsonObject, "result"));
             int liquidAmount = JSONUtils.getAsInt(jsonObject, "amount");
             FluidStack resultFluid = new FluidStack(ForgeRegistries.FLUIDS.getValue(fluidId), liquidAmount);
+            int minHeat = JSONUtils.getAsInt(jsonObject, "minimumHeat");
+            int processingTime = JSONUtils.getAsInt(jsonObject, "processingTime");
 
-            return new MeltingRecipe(recipeid, ingredient, resultFluid);
+            return new MeltingRecipe(recipeid, ingredient, resultFluid, minHeat, processingTime);
         }
 
         @Nullable
@@ -93,7 +108,8 @@ public class MeltingRecipe implements IRecipe<IInventory> {
         public MeltingRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
             Ingredient ingredient = Ingredient.fromNetwork(buffer);
             FluidStack result = buffer.readFluidStack();
-            return new MeltingRecipe(recipeId, ingredient, result);
+            int[] intArr = buffer.readVarIntArray(2);
+            return new MeltingRecipe(recipeId, ingredient, result, intArr[0], intArr[1]);
 
         }
 
@@ -101,6 +117,7 @@ public class MeltingRecipe implements IRecipe<IInventory> {
         public void toNetwork(PacketBuffer buffer, MeltingRecipe recipe) {
             recipe.ingredient.toNetwork(buffer);
             buffer.writeFluidStack(recipe.resultLiquid);
+            buffer.writeVarIntArray(new int[]{recipe.minHeatAmount, recipe.processTime});
         }
     }
 }
