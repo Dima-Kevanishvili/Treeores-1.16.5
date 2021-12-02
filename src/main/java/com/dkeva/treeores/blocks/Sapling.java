@@ -7,6 +7,6 @@ import net.minecraft.block.trees.Tree;
 
 public class Sapling extends SaplingBlock {
     public Sapling(Tree tree) {
-        super(tree, Properties.of(Material.PLANT).noCollission().randomTicks().strength(0.0f).sound(SoundType.GRASS));
+        super(tree, Properties.of(Material.PLANT).noCollission().randomTicks().instabreak().sound(SoundType.GRASS));
     }
 }

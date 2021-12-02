@@ -16,5 +16,7 @@ public class Treeores {
         Registration.init();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ModSetup::init);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSideSetup::init);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSideSetup::registerBlockColors);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSideSetup::registerItemColors);
     }
 }
