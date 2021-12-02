@@ -230,7 +230,7 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity,
                 fluidHandler.ifPresent(fHandler -> {
                     ItemStack stack = iHandler.getStackInSlot(0);
                     if (!stack.isEmpty()) {
-                        System.out.println(this.level.getRecipeManager().getAllRecipesFor(this.recipeType));
+                        System.out.println(this.level.getRecipeManager().getRecipes());
                         MeltingRecipe recipe = this.level.getRecipeManager().getRecipeFor(this.recipeType, this, this.level).orElse(null);
                         if (canMelt(recipe)) {
                             iHandler.extractItem(0, 1, false);
