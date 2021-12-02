@@ -1,0 +1,6 @@
+{
+  "type": "treeores:melting",
+  "ingredient": "minecraft:iron_ingot",
+  "result": "minecraft:water",
+  "amount": 120
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "stage=0": {
+      "model": "treeores:block/glowstone_sapling"
+    },
+    "stage=1": {
+      "model": "treeores:block/glowstone_sapling"
+    }
+  }
+}

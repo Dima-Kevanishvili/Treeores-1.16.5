@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "values": [
+    "treeores:iron_log",
+    "treeores:gold_log",
+    "treeores:coal_log",
+    "treeores:redstone_log",
+    "treeores:diamond_log",
+    "treeores:emerald_log",
+    "treeores:lapis_log",
+    "treeores:obsidian_log",
+    "treeores:glowstone_log",
+    "treeores:quartz_log",
+    "treeores:xp_log"
+  ]
+}

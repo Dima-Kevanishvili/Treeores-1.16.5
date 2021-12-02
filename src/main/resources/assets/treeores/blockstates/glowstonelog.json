@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "treeores:block/glowstone_log"
+    },
+    "axis=z": {
+      "model": "treeores:block/glowstone_log",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "treeores:block/glowstone_log",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

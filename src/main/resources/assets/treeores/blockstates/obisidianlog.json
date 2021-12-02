@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "treeores:block/obisidian_log"
+    },
+    "axis=z": {
+      "model": "treeores:block/obisidian_log",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "treeores:block/obisidian_log",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

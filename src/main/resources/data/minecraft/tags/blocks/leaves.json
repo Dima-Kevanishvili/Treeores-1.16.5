@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "values": [
+    "treeores:iron_leaf",
+    "treeores:gold_leaf",
+    "treeores:coal_leaf",
+    "treeores:redstone_leaf",
+    "treeores:diamond_leaf",
+    "treeores:emerald_leaf",
+    "treeores:lapis_leaf",
+    "treeores:obsidian_leaf",
+    "treeores:glowstone_leaf",
+    "treeores:quartz_leaf",
+    "treeores:xp_leaf"
+  ]
+}

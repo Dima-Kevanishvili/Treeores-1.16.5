@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "values": [
+    "treeores:iron_sapling",
+    "treeores:gold_sapling",
+    "treeores:coal_sapling",
+    "treeores:redstone_sapling",
+    "treeores:diamond_sapling",
+    "treeores:emerald_sapling",
+    "treeores:lapis_sapling",
+    "treeores:obsidian_sapling",
+    "treeores:glowstone_sapling",
+    "treeores:quartz_sapling",
+    "treeores:xp_sapling"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "treeores:block/diamond_log"
+    },
+    "axis=z": {
+      "model": "treeores:block/diamond_log",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "treeores:block/diamond_log",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "end": "treeores:blocks/log_diamond_top",
+    "side": "treeores:blocks/log_diamond"
+  }
+}

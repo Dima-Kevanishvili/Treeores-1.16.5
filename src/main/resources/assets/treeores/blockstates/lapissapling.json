@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "stage=0": {
+      "model": "treeores:block/lapis_sapling"
+    },
+    "stage=1": {
+      "model": "treeores:block/lapis_sapling"
+    }
+  }
+}

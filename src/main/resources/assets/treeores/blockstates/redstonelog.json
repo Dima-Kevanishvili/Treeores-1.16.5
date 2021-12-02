@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "treeores:block/redstone_log"
+    },
+    "axis=z": {
+      "model": "treeores:block/redstone_log",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "treeores:block/redstone_log",
+      "x": 90,
+      "y": 90
+    }
+  }
+}
