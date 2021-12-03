@@ -4,13 +4,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
 public class MelterInventory implements IInventory {
     private final IItemHandler handler;
-    public MelterInventory(IItemHandler handler){
+
+    public MelterInventory(IItemHandler handler) {
         this.handler = handler;
     }
+
     @Override
     public int getContainerSize() {
         return handler.getSlots();
@@ -18,8 +19,8 @@ public class MelterInventory implements IInventory {
 
     @Override
     public boolean isEmpty() {
-        for(int slot = 0; slot < handler.getSlots(); slot ++){
-            if(!handler.getStackInSlot(slot).isEmpty()){
+        for (int slot = 0; slot < handler.getSlots(); slot++) {
+            if (!handler.getStackInSlot(slot).isEmpty()) {
                 return false;
             }
         }
@@ -53,7 +54,7 @@ public class MelterInventory implements IInventory {
 
     @Override
     public boolean stillValid(PlayerEntity player) {
-            return true;
+        return true;
     }
 
     @Override

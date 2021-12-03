@@ -89,6 +89,7 @@ public class Melter extends Block {
         }
         return ActionResultType.SUCCESS;
     }
+
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(BlockStateProperties.FACING);

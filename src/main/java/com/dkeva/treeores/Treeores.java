@@ -1,9 +1,9 @@
 package com.dkeva.treeores;
 
-import com.dkeva.treeores.setup.*;
-import net.minecraftforge.fml.DistExecutor;
+import com.dkeva.treeores.setup.ClientSideSetup;
+import com.dkeva.treeores.setup.ModSetup;
+import com.dkeva.treeores.setup.Registration;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

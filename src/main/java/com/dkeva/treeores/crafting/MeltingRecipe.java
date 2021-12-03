@@ -1,11 +1,8 @@
 package com.dkeva.treeores.crafting;
 
-import com.dkeva.treeores.Refs;
 import com.dkeva.treeores.setup.ModSetup;
 import com.dkeva.treeores.setup.Registration;
 import com.google.gson.JsonObject;
-import net.minecraft.block.Block;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -17,7 +14,6 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
@@ -30,7 +26,7 @@ public class MeltingRecipe implements IRecipe<IInventory> {
     private int minHeatAmount;
     private int processTime;
 
-    public MeltingRecipe(ResourceLocation recipeId, Ingredient ingredient, FluidStack result, int minHeatAmount, int processTime){
+    public MeltingRecipe(ResourceLocation recipeId, Ingredient ingredient, FluidStack result, int minHeatAmount, int processTime) {
         this.recipeId = recipeId;
         this.ingredient = ingredient;
         this.resultLiquid = result;
@@ -46,7 +42,7 @@ public class MeltingRecipe implements IRecipe<IInventory> {
 
     @Override
     public ItemStack assemble(IInventory p_77572_1_) {
-            return ItemStack.EMPTY;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -58,6 +54,7 @@ public class MeltingRecipe implements IRecipe<IInventory> {
     public ItemStack getResultItem() {
         return ItemStack.EMPTY;
     }
+
     public FluidStack getResultLiquid() {
         return this.resultLiquid;
     }

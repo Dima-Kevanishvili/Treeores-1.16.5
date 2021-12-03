@@ -224,10 +224,10 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity 
                             isProcessing = false;
                             setChanged();
                         }
-                    } else if(isProcessing){
+                    } else if (isProcessing) {
                         resetProcessing();
                     }
-                } else if(isProcessing){
+                } else if (isProcessing) {
                     resetProcessing();
                 }
             });
@@ -239,6 +239,7 @@ public class TileEntityMelter extends TileEntity implements ITickableTileEntity 
         processTime = 0;
         setChanged();
     }
+
     // Todo: Add New Recipe Type and Find Using Recipes
     private void handleLiquidToItem() {
         itemHandler.ifPresent(iHandler -> {

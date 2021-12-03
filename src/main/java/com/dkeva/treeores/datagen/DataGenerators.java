@@ -9,7 +9,7 @@ import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 public class DataGenerators {
 
     @SubscribeEvent
-    public static void gatherData(GatherDataEvent e){
+    public static void gatherData(GatherDataEvent e) {
         DataGenerator gen = e.getGenerator();
         gen.addProvider(new Recipes(gen));
 //        gen.addProvider(new LootTables(gen));

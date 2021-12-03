@@ -1,6 +1,5 @@
 package com.dkeva.treeores.setup;
 
-import com.dkeva.treeores.Refs;
 import com.dkeva.treeores.blocks.Leaf;
 import com.dkeva.treeores.blocks.Log;
 import com.dkeva.treeores.blocks.Melter;
@@ -14,7 +13,6 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

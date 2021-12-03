@@ -25,8 +25,8 @@ public class MelterContainer extends Container {
     private final IItemHandler playerInventory;
     private final IIntArray melterData;
 
-    public MelterContainer(int windowId, World world, BlockPos pos, PlayerInventory pInv, PlayerEntity playerEntity){
-        this(windowId,world,pos,pInv, playerEntity, new IntArray(4));
+    public MelterContainer(int windowId, World world, BlockPos pos, PlayerInventory pInv, PlayerEntity playerEntity) {
+        this(windowId, world, pos, pInv, playerEntity, new IntArray(4));
     }
 
     public MelterContainer(int windowId, World world, BlockPos pos, PlayerInventory pInv, PlayerEntity playerEntity, IIntArray melterData) {
@@ -37,21 +37,28 @@ public class MelterContainer extends Container {
         this.melterData = melterData;
         layoutPlayerInventorySlots(8, 66);
         tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
-            addSlot(new SlotItemHandler(handler, 0, 44,13));
-            addSlot(new SlotItemHandler(handler, 1, 125,38));
-            addSlot(new SlotItemHandler(handler, 2, 125,13));
+            addSlot(new SlotItemHandler(handler, 0, 44, 13));
+            addSlot(new SlotItemHandler(handler, 1, 125, 38));
+            addSlot(new SlotItemHandler(handler, 2, 125, 13));
         });
         addDataSlots(melterData);
 
     }
 
-    public int getFluidAmount (){
-       return this.melterData.get(0);
+    public int getFluidAmount() {
+        return this.melterData.get(0);
     }
-    public int getCounter () {return this.melterData.get(1);}
-    public int getProcessTime () {return this.melterData.get(2);}
+
+    public int getCounter() {
+        return this.melterData.get(1);
+    }
+
+    public int getProcessTime() {
+        return this.melterData.get(2);
+    }
+
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
-        for (int i = 0 ; i < amount ; i++) {
+        for (int i = 0; i < amount; i++) {
             addSlot(new SlotItemHandler(handler, index, x, y));
             x += dx;
             index++;
@@ -60,7 +67,7 @@ public class MelterContainer extends Container {
     }
 
     private int addSlotBox(IItemHandler handler, int index, int x, int y, int horAmount, int dx, int verAmount, int dy) {
-        for (int j = 0 ; j < verAmount ; j++) {
+        for (int j = 0; j < verAmount; j++) {
             index = addSlotRange(handler, index, x, y, horAmount, dx);
             y += dy;
         }
@@ -78,9 +85,11 @@ public class MelterContainer extends Container {
 
     @Override
     public boolean stillValid(PlayerEntity playerIn) {
+        // TODO: Figure out which player to pass here
         return stillValid(IWorldPosCallable.create(tileEntity.getLevel(), tileEntity.getBlockPos()), playerEntity, Registration.MELTER.get());
     }
 
+    // TODO: Sort this out.
     @Override
     public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
