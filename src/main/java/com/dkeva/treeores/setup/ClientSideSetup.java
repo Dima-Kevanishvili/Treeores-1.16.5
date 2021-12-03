@@ -27,16 +27,16 @@ public class ClientSideSetup {
             ScreenManager.register(Registration.MELTER_CONTAINER.get(), MelterScreen::new);
 
             RenderTypeLookup.setRenderLayer(Registration.IRON_SAPLING.get(), RenderType.cutout());
-            RenderTypeLookup.setRenderLayer(Registration.GOLD_SAPLING.get(), RenderType.translucent());
-            RenderTypeLookup.setRenderLayer(Registration.COAL_SAPLING.get(), RenderType.translucent());
-            RenderTypeLookup.setRenderLayer(Registration.REDSTONE_SAPLING.get(), RenderType.translucent());
-            RenderTypeLookup.setRenderLayer(Registration.DIAMOND_SAPLING.get(), RenderType.translucent());
-            RenderTypeLookup.setRenderLayer(Registration.EMERALD_SAPLING.get(), RenderType.translucent());
-            RenderTypeLookup.setRenderLayer(Registration.LAPIS_SAPLING.get(), RenderType.translucent());
-            RenderTypeLookup.setRenderLayer(Registration.OBSIDIAN_SAPLING.get(), RenderType.translucent());
-            RenderTypeLookup.setRenderLayer(Registration.GLOWSTONE_SAPLING.get(), RenderType.translucent());
-            RenderTypeLookup.setRenderLayer(Registration.QUARTZ_SAPLING.get(), RenderType.translucent());
-            RenderTypeLookup.setRenderLayer(Registration.XP_SAPLING.get(), RenderType.translucent());
+            RenderTypeLookup.setRenderLayer(Registration.GOLD_SAPLING.get(), RenderType.cutout());
+            RenderTypeLookup.setRenderLayer(Registration.COAL_SAPLING.get(), RenderType.cutout());
+            RenderTypeLookup.setRenderLayer(Registration.REDSTONE_SAPLING.get(), RenderType.cutout());
+            RenderTypeLookup.setRenderLayer(Registration.DIAMOND_SAPLING.get(), RenderType.cutout());
+            RenderTypeLookup.setRenderLayer(Registration.EMERALD_SAPLING.get(), RenderType.cutout());
+            RenderTypeLookup.setRenderLayer(Registration.LAPIS_SAPLING.get(), RenderType.cutout());
+            RenderTypeLookup.setRenderLayer(Registration.OBSIDIAN_SAPLING.get(), RenderType.cutout());
+            RenderTypeLookup.setRenderLayer(Registration.GLOWSTONE_SAPLING.get(), RenderType.cutout());
+            RenderTypeLookup.setRenderLayer(Registration.QUARTZ_SAPLING.get(), RenderType.cutout());
+            RenderTypeLookup.setRenderLayer(Registration.XP_SAPLING.get(), RenderType.cutout());
         });
     }
 
