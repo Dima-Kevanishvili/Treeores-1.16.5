@@ -17,7 +17,7 @@ public class MelterScreen extends ContainerScreen<MelterContainer> {
 
     @Override
     protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
-        this.font.draw(matrixStack, "Melter", 10, 10, 4210752);
+        this.font.draw(matrixStack, this.title, 10, 10, 4210752);
     }
 
     protected void renderFluidAmount(MatrixStack matrixStack, int relX, int relY) {
@@ -40,11 +40,9 @@ public class MelterScreen extends ContainerScreen<MelterContainer> {
         renderFluidAmount(matrixStack, relX, relY);
         renderProcessProgress(matrixStack, relX, relY);
     }
-    private boolean isMouseInBoundingBox(int mouseX, int mouseY, int relX, int relY, int x0, int x1, int y0, int y1){
-        return mouseX > relX + x0 && mouseX < relX + x1 && mouseY > relY + y0 && mouseY < relY + y1;
-    }
+
     protected void renderAmountTooltip(MatrixStack matrixStack, int mouseX, int mouseY, int relX, int relY) {
-        if (isMouseInBoundingBox(mouseX, mouseY, relX,relY, 150, 170, 6, 63)) {
+        if (ScreenHelpers.isMouseInBoundingBox(mouseX, mouseY, relX,relY, 150, 170, 6, 63)) {
             this.renderTooltip(matrixStack, new StringTextComponent("Amount: " + menu.getFluidAmount()), mouseX, mouseY);
         }
     }
