@@ -20,10 +20,9 @@ public class MelterScreen extends ContainerScreen<MelterContainer> {
         super(melterContainer, playerInventory, name);
     }
 
-    // TODO: Fix Font Rendering
     @Override
     protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
-        drawString(matrixStack, Minecraft.getInstance().font, "Melter", 10, 10, 4210752);
+        this.font.draw(matrixStack, "Melter", 10, 10, 4210752);
     }
 
     protected void renderFluidAmount(MatrixStack matrixStack, int relX, int relY) {
