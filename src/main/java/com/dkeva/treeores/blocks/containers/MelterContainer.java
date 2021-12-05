@@ -25,6 +25,9 @@ public class MelterContainer extends Container {
     private final IItemHandler playerInventory;
     private final IIntArray melterData;
 
+    private final int MAIN_INPUT = 0;
+    private final int SAPLING_INPUT = 1;
+    private final int OUTPUT = 2;
     public MelterContainer(int windowId, World world, BlockPos pos, PlayerInventory pInv, PlayerEntity playerEntity) {
         this(windowId, world, pos, pInv, playerEntity, new IntArray(4));
     }
@@ -37,9 +40,9 @@ public class MelterContainer extends Container {
         this.melterData = melterData;
         layoutPlayerInventorySlots(8, 66);
         tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(handler -> {
-            addSlot(new SlotItemHandler(handler, 0, 44, 13));
-            addSlot(new SlotItemHandler(handler, 1, 125, 38));
-            addSlot(new SlotItemHandler(handler, 2, 125, 13));
+            addSlot(new SlotItemHandler(handler, MAIN_INPUT, 44, 13));
+            addSlot(new SlotItemHandler(handler, SAPLING_INPUT, 125, 38));
+            addSlot(new SlotItemHandler(handler, OUTPUT, 125, 13));
         });
         addDataSlots(melterData);
 
@@ -85,19 +88,18 @@ public class MelterContainer extends Container {
 
     @Override
     public boolean stillValid(PlayerEntity playerIn) {
-        // TODO: Figure out which player to pass here
-        return stillValid(IWorldPosCallable.create(tileEntity.getLevel(), tileEntity.getBlockPos()), playerEntity, Registration.MELTER.get());
+        return stillValid(IWorldPosCallable.create(tileEntity.getLevel(), tileEntity.getBlockPos()), playerIn, Registration.MELTER.get());
     }
 
     // TODO: Sort this out.
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(PlayerEntity playerIn, int slotNum) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.slots.get(index);
+        Slot slot = this.slots.get(slotNum);
         if (slot != null && slot.hasItem()) {
             ItemStack stack = slot.getItem();
             itemstack = stack.copy();
-            if (index == 0) {
+            if (slotNum == MAIN_INPUT) {
                 if (!this.moveItemStackTo(stack, 1, 37, true)) {
                     return ItemStack.EMPTY;
                 }
@@ -107,11 +109,11 @@ public class MelterContainer extends Container {
                     if (!this.moveItemStackTo(stack, 0, 1, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index < 28) {
+                } else if (slotNum < 28) {
                     if (!this.moveItemStackTo(stack, 28, 37, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index < 37 && !this.moveItemStackTo(stack, 1, 28, false)) {
+                } else if (slotNum < 37 && !this.moveItemStackTo(stack, 1, 28, false)) {
                     return ItemStack.EMPTY;
                 }
             }
